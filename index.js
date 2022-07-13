@@ -58,17 +58,38 @@ app.post("/api/notes", (request, response) => {
   });
 });
 
-app.get("/api/notes/:id", (request, response) => {
-  Note.findById(request.params.id).then((note) => {
-    response.status(200).json(note);
-  });
+app.get("/api/notes/:id", (request, response, next) => {
+  Note.findById(request.params.id)
+    .then((note) => {
+      console.log("note", note);
+      if (note) {
+        response.status(200).json(note);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((err) => next(err));
 });
 
-app.delete("/api/notes/:id", (request, response) => {
-  const id = Number(request.params.id);
-  notes = notes.filter((note) => note.id !== id);
+app.delete("/api/notes/:id", (request, response, next) => {
+  Note.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((err) => next(err));
+});
 
-  response.status(204).end();
+app.put("/api/notes/:id", (request, response, next) => {
+  const body = request.body;
+  const note = {
+    content: body.content,
+    important: body.important,
+  };
+  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+    .then((updatedNote) => {
+      response.status(200).json(updatedNote);
+    })
+    .catch((err) => next(err));
 });
 
 const unknownEndpoint = (request, response, next) => {
@@ -76,6 +97,15 @@ const unknownEndpoint = (request, response, next) => {
 };
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformated id" });
+  }
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
