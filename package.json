@@ -11,7 +11,8 @@
     "deploy": "git push heroku master",
     "git:deploy": "git push origin master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy && npm run git:deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,7 @@
     "mongoose": "^6.4.4"
   },
   "devDependencies": {
+    "eslint": "^8.19.0",
     "nodemon": "^2.0.19",
     "shx": "^0.3.4"
   }
