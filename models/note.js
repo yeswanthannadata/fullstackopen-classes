@@ -1,8 +1,5 @@
 const mongoose = require('mongoose')
 
-const url = 'mongodb+srv://yeswanth:yeswanth@nodeexpress.nfcbg.mongodb.net/noteApp?retryWrites=true&w=majority'
-mongoose.connect(url)
-
 const noteSchema = new mongoose.Schema({
   content: {
     type: String,
