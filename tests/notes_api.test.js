@@ -7,10 +7,10 @@ const helper = require('./test_helper')
 
 beforeEach(async () => {
   await Note.deleteMany({})
-  let noteObj = new Note(helper.initialNotes[0])
-  await noteObj.save()
-  noteObj = new Note(helper.initialNotes[1])
-  await noteObj.save()
+
+  const noteObjects = helper.initialNotes.map(note => new Note(note))
+  const promiseArray = noteObjects.map(note => note.save())
+  await Promise.all(promiseArray)
 }, 100000)
 
 test('notes are returned as json', async () => {
